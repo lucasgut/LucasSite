@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <servlet>
+    <servlet-name>DownloadsServlet</servlet-name>
+    <servlet-class>org.lucas.servlet.DownloadsServlet</servlet-class>
+	<init-param>
+		<param-name>sqlCompactStatement</param-name>
+		<param-value>OPTIMIZE TABLE DOWNLOADS</param-value>
+	</init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>DbManager</servlet-name>
+    <servlet-class>org.lucas.servlet.DbManager</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DownloadsServlet</servlet-name>
+    <url-pattern>/DownloadsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>DbManager</servlet-name>
+    <url-pattern>/DbManager</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>
+            30
+        </session-timeout>
+  </session-config>
+  <welcome-file-list>
+    <welcome-file>
+            index.jsp
+        </welcome-file>
+    <welcome-file>
+            index.html
+        </welcome-file>
+    <welcome-file>
+            index.htm
+        </welcome-file>
+  </welcome-file-list>
+</web-app>

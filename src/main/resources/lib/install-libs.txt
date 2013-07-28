@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=multipartrequest.jar -DgroupId=opensymphony -DartifactId=pell-multipart -Dversion=1.30 -Dpackaging=jar
