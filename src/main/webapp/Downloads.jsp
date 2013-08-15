@@ -26,7 +26,7 @@ try {
 		<a href="PostDownload.jsp">Post a download</a><br>
 	<% } %>	
 	<br>
-	<form name="formDownloads" method="post" action="/DownloadsServlet">
+	<form name="formDownloads" method="post" action="DownloadsServlet">
 	<input type="HIDDEN" name="DOWNLOAD_NUM" VALUE="">
 	<input type="HIDDEN" name="DB_ACTION" VALUE="">
 	<% 

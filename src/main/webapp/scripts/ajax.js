@@ -47,15 +47,18 @@ function sack(file){
 	}
 	
 	this.encodeURLString = function(string){
-		varArray = string.split('&');
-		for (i = 0; i < varArray.length; i++){
-			urlVars = varArray[i].split('=');
-			if (urlVars[0].indexOf('amp;') != -1){
-				urlVars[0] = urlVars[0].substring(4);
+		if(string != "") {
+			varArray = string.split('&');
+			for (i = 0; i < varArray.length; i++){
+				urlVars = varArray[i].split('=');
+				if (urlVars[0].indexOf('amp;') != -1){
+					urlVars[0] = urlVars[0].substring(4);
+				}
+				varArray[i] = this.encVar(urlVars[0],urlVars[1]);
 			}
-			varArray[i] = this.encVar(urlVars[0],urlVars[1]);
+			return varArray.join('&');
 		}
-	return varArray.join('&');
+		return "";
 	}
 	
 	this.runResponse = function(){
