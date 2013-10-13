@@ -21,6 +21,12 @@ public interface DownloadsManager
     public void createDownload(Download download);
 
     /**
+     * Update a download
+     * @param download download
+     */
+    public void updateDownload(Download download);
+    
+    /**
      * Return a download
      * @param downloadId download Id
      * @return download

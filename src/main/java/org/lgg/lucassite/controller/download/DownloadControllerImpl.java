@@ -3,16 +3,24 @@ package org.lgg.lucassite.controller.download;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.lgg.lucassite.DownloadsHelper;
 import org.lgg.lucassite.model.configuration.ConfigurationManager;
 import org.lgg.lucassite.model.download.Download;
 import org.lgg.lucassite.model.download.Downloads;
 import org.lgg.lucassite.model.download.DownloadsManager;
 import org.lgg.lucassite.model.user.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,10 +31,14 @@ import org.springframework.web.servlet.ModelAndView;
 @Scope("session")
 public class DownloadControllerImpl implements DownloadController
 {
+	final static Logger logger = LoggerFactory.getLogger(DownloadControllerImpl.class);
+	
     @Autowired private DownloadsManager downloadsManager;
     @Autowired private ConfigurationManager configurationManager;
     @Autowired private UserSession userSession;				//Session scoped
 
+    private String downloadsPath;
+    
     public void setDownloadManager(DownloadsManager downloadsManager)
     {
         this.downloadsManager = downloadsManager;
@@ -40,6 +52,11 @@ public class DownloadControllerImpl implements DownloadController
     public void setUserSession(UserSession userSession)
     {
         this.userSession = userSession;
+    }
+    
+    @Value("#{lucasSiteProps.downloadsPath}")
+    public void setDownloadsPath(String downloadsPath) {
+    	this.downloadsPath = downloadsPath;
     }
     
     /**
@@ -61,6 +78,7 @@ public class DownloadControllerImpl implements DownloadController
     public ModelAndView downloadContentPage(@RequestParam Long downloadId)
     {
         final ModelAndView mav = new ModelAndView("DownloadContent");
+        mav.addObject("isGuest", configurationManager.isUserLoggedIn(userSession.getId()) ? false : true);
         mav.addObject("download", downloadsManager.getDownload(downloadId));
         return mav;
     }    
@@ -76,6 +94,14 @@ public class DownloadControllerImpl implements DownloadController
     /**
      * {@inheritDoc}
      */
+    @ResponseBody
+    public List<String> downloadTitles() {
+        return DownloadsHelper.sortedDownloadTitles(downloadsManager.getDownloads());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public void downloadImage(HttpServletResponse response, @RequestParam Long downloadId) throws IOException
     {
     	Download download = downloadsManager.getDownload(downloadId);
@@ -88,5 +114,26 @@ public class DownloadControllerImpl implements DownloadController
 	        response.setContentType("image/jpeg");
 	        IOUtils.copy(isImage, response.getOutputStream());
     	}
+    }    
+
+    /**
+     * {@inheritDoc}
+     */
+    public void downloadFile(HttpServletResponse response, @RequestParam Long downloadId) throws IOException
+    {
+    	Download download = downloadsManager.getDownload(downloadId);
+    	if(download == null) {
+    		throw new IOException("Failed to load download [" + downloadId + "]");
+    	}
+    	String fileName = download.getUrl();
+        Path path = FileSystems.getDefault().getPath(downloadsPath, fileName);
+		logger.debug("Downloading file [" + path.getFileName() + "].");
+        String mimeType = Files.probeContentType(path);
+        if(mimeType == null) {
+        	mimeType = "application/octet-stream";
+        }
+        response.setContentType(mimeType);
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + path.getFileName());
+        Files.copy(path, response.getOutputStream());
     }    
 }

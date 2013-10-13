@@ -32,6 +32,14 @@ public class DownloadsManagerDB implements DownloadsManager
     	downloadsDAO.save(download);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void updateDownload(Download download) {
+    	logger.debug("Updating download [" + download.toString() + "].");
+    	downloadsDAO.merge(download);
+    }
+    
 	@Override
 	public Download getDownload(Long downloadId) {
     	logger.debug("Querying download [" + downloadId + "]");

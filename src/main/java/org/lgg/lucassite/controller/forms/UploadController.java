@@ -25,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -67,12 +68,21 @@ public class UploadController
     }
 
     @RequestMapping(method=RequestMethod.GET)
-    public ModelAndView showUploadForm() {
+    public ModelAndView showUploadForm(@RequestParam(value = "downloadId", required = false) Long downloadId) {
+    	Upload upload = new Upload();
+    	if(downloadId != null) {
+	    	Download download = downloadsManager.getDownload(downloadId);
+	    	if(download != null) {
+	    		upload.setId(download.getId());
+	    		upload.setSubject(download.getSubject());
+	    		upload.setDescription(download.getDescription());
+	    	}
+    	}    	
         final ModelAndView mav = new ModelAndView("PostDownload");
         mav.addObject("hitcount", configurationManager.getHitCount());
         mav.addObject("isGuest", configurationManager.isUserLoggedIn(userSession.getId()) ? false : true);
         mav.addObject("user", configurationManager.getUser(userSession.getId()));
-        mav.getModelMap().put("upload", new Upload());
+        mav.getModelMap().put("upload", upload);
         return mav;    	
     }	
 
@@ -90,39 +100,42 @@ public class UploadController
 		}
 		
 		//Read the image
-		byte[] image = null;
-		if(upload.getImage() != null) {
-			try {
-				image = upload.getImage() != null ? upload.getImage().getBytes() : null;
-			}
-			catch(IOException ioe) {
-				result.rejectValue("image", "image.io.error", "Failed to upload image: " + ioe.getMessage());
-			}
-		}
+		byte[] image = getImage(upload, result);
 		
 		//Read and save the file
-		if(upload.getFile() != null) {
-			try {
-				saveFile(upload.getFile());
-			}
-			catch(IOException ioe) {
-				result.rejectValue("file", "file.io.error", "Failed to upload file: " + ioe.getMessage());
-			}
-		}
+		String url = saveFile(upload, result);
 
-		//Create the download
-		Download download = new Download(
-				upload.getId(),
-				upload.getSubject(),
-				new Date(),
-				upload.getDescription(),
-				upload.getUrl(),
-				image);
+		//Persist download
 		if(upload.getId() == null) {
+			//Create the download
+			Download download = new Download(
+					upload.getId(),
+					upload.getSubject(),
+					new Date(),
+					upload.getDescription(),
+					url,
+					image);
 			downloadsManager.createDownload(download);
 		}
 		else {
-			//downloadsManager.updateDownload(download);
+			//Update existing download
+	    	Download download = downloadsManager.getDownload(upload.getId());
+	    	if(download == null) {
+				result.rejectValue("download", "download.error", "Failed to find download [" + upload.getId() + "].");
+	    	}
+	    	download.setSubject(upload.getSubject());
+	    	download.setDescription(upload.getDescription());
+	    	download.setLastModified(new Date());
+	    	if(upload.getImage() != null && !upload.getImage().isEmpty()) {
+	    		download.setImage(getImage(upload, result));
+	    	}
+	    	if(upload.getFile() != null && !upload.getFile().isEmpty()) {
+	    		download.setUrl(saveFile(upload, result));
+	    	}
+	    	else if(upload.getUrl() != null && !upload.getUrl().isEmpty()) {
+	    		download.setUrl(upload.getUrl());
+	    	}
+			downloadsManager.updateDownload(download);
 		}
 		
 		model.put("upload", upload);
@@ -140,5 +153,33 @@ public class UploadController
 		}
 		file.close();
 		inStreamFileBuf.close();
+	}
+	
+	private String saveFile(Upload upload, BindingResult result) {
+		String url = upload.getUrl();
+		MultipartFile file = upload.getFile();
+		if(file != null && !file.isEmpty()) {
+			try {
+				saveFile(file);
+				url = upload.getFile().getOriginalFilename();
+			}
+			catch(IOException ioe) {
+				result.rejectValue("file", "file.io.error", "Failed to upload file: " + ioe.getMessage());
+			}
+		}
+		return url;
+	}
+	
+	private byte[] getImage(Upload upload, BindingResult result) {
+		byte[] image = null;
+		if(upload.getImage() != null) {
+			try {
+				image = upload.getImage() != null ? upload.getImage().getBytes() : null;
+			}
+			catch(IOException ioe) {
+				result.rejectValue("image", "image.io.error", "Failed to upload image: " + ioe.getMessage());
+			}
+		}
+		return image;
 	}
 }

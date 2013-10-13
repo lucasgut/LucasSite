@@ -22,7 +22,7 @@
 						<tr><td>Description:</td><td><form:textarea path="description" cols="46" rows="10" /></td></tr>
 						<tr><td>File:</td><td><form:input path="file" type="file" size="60" /></td></tr>
 						<tr><td>URL:</td><td><form:input path="url" size="60" /></td></tr>
-						<tr><td>Image:</td><td><form:input path="image" type="file" accept="image/*" /></td></tr>
+						<tr><td>Image:</td><td><form:input path="image" type="file" accept="image/jpeg" /></td></tr>
 						<tr><td valign="top">&nbsp; </td><td><input type="submit" name="Submit" value="Submit"><input type="reset" name="Reset" value="Reset"></td></tr>
 					</table>
 				</form:form>

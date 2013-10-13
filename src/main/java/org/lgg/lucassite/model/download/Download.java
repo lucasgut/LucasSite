@@ -97,6 +97,11 @@ public class Download
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	public boolean isValidUrl() {
+		return (url.startsWith("http") || url.startsWith("ftp")) &&
+				url.contains("://");
+	}
 
 	public byte[] getImage() {
 		return image;

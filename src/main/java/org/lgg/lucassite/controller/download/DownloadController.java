@@ -1,6 +1,7 @@
 package org.lgg.lucassite.controller.download;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,6 +35,14 @@ public interface DownloadController
      */
     @RequestMapping(value = "/DownloadImage.html")
     public void downloadImage(HttpServletResponse response, @RequestParam Long downloadId) throws IOException;
+
+    /**
+     * Returns the file of a download
+     * 
+     * @return the file
+     */
+    @RequestMapping(value = "/DownloadFile.html")
+    public void downloadFile(HttpServletResponse response, @RequestParam Long downloadId) throws IOException;
     
     /**
      * Returns a list of downloads
@@ -42,4 +51,12 @@ public interface DownloadController
      */
     @RequestMapping(value = "/Downloads.xml")
     Downloads downloads();
+
+    /**
+     * Returns a sorted list of download titles
+     * 
+     * @return download titles.
+     */
+    @RequestMapping(value = "/DownloadTitles.xml")
+    List<String> downloadTitles();
 }
