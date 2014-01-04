@@ -6,9 +6,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lgg.lucassite.model.download.Downloads;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.http.HttpStatus;
 
 public interface DownloadController
 {
@@ -59,4 +63,12 @@ public interface DownloadController
      */
     @RequestMapping(value = "/DownloadTitles.xml")
     List<String> downloadTitles();
+    
+    /**
+     * Delete a download
+     * @param downloadId download Id
+     */
+    @RequestMapping(value = "/Downloads({downloadId}).xml", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteDownload(@PathVariable("downloadId") Long downloadId);
 }

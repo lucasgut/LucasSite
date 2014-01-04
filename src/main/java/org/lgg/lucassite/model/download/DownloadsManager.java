@@ -32,4 +32,10 @@ public interface DownloadsManager
      * @return download
      */
     public Download getDownload(Long downloadId);
+    
+    /**
+     * Delete a download
+     * @param downloadId download Id
+     */
+    public void deleteDownload(Long downloadId);
 }

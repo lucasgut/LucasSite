@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -135,5 +136,13 @@ public class DownloadControllerImpl implements DownloadController
         response.setContentType(mimeType);
         response.setHeader("Content-Disposition", "attachment; filename=\"" + path.getFileName());
         Files.copy(path, response.getOutputStream());
-    }    
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void deleteDownload(@PathVariable("downloadId") Long downloadId) {
+		downloadsManager.deleteDownload(downloadId);
+	}    
 }

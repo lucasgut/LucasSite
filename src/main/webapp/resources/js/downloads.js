@@ -2,39 +2,32 @@
 	Javascript functions 
 */
 
-// From prototype.js @ www.conio.net | Returns an object reference to one or more strings
-// ignore the fact that there are no arguments to this method -- javascript doesn't care how many you send (not strongly typed)
-// The method checks the actual # of arguments -- returns a single object or an array
-function $() {
-    var elements = new Array();
-
-    for (var i = 0; i < arguments.length; i++) {
-        var element = arguments[i];
-
-        if (typeof element == 'string')
-            element = document.getElementById(element);
-
-        if (arguments.length == 1)
-            return element;
-
-        elements.push(element);
-    }
-
-    return elements;
+window.$ = function(selector) {
+	return document.querySelector(selector);
+};
+  
+function deleteRecord(downloadId)
+{
+	$.ajax({
+	       url: "/LucasSite/Downloads(" + downloadId + ").xml",
+	       dataType: "json",
+	       type: 'DELETE',
+	       success: function () {
+                console.log('Download [' + downloadId + '] has been deleted.');
+	       },
+           error: ErrorCallback
+	});	
 }
 
-
-function deleteRecord(DownloadNum)
-{
-	formDownloads.DOWNLOAD_NUM.value = DownloadNum;
-	formDownloads.DB_ACTION.value = "Delete";
-	formDownloads.submit();
+//Error handler
+function ErrorCallback(error) {
+    alert(error.message + ": " + error.statusCode + "[" + error.statusText + "]");
+    $("#dialog-form").dialog("close");
 }
 
 function toggleDiv(element, pathToFile) {
-    var e = $(element);
-
-    if (e) {
+    var e = document.getElementById(element);
+    if(e) {
         e.style.display = ((e.style.display != 'block') ? 'block' : 'none');
     }
 	loadContent(element, pathToFile);     

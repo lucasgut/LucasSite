@@ -4,6 +4,7 @@
 	<link href="resources/css/MainStyles.css" type="text/css" rel="stylesheet">
 	<script src="resources/js/ajax.js" type="text/javascript"></script>
 	<script src="resources/js/downloads.js" type="text/javascript"></script>
+	<script src="resources/js/jquery-1.10.2.js" type="text/javascript"></script>
 	<title>Lucas' Programming Resources</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>

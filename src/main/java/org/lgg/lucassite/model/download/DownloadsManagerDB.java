@@ -45,4 +45,11 @@ public class DownloadsManagerDB implements DownloadsManager
     	logger.debug("Querying download [" + downloadId + "]");
         return downloadsDAO.findById(downloadId);
 	}
+
+	@Override
+	public void deleteDownload(Long downloadId) {
+    	logger.debug("Deleting download [" + downloadId + "]");
+    	Download download = downloadsDAO.findById(downloadId);
+        downloadsDAO.delete(download);
+	}
 }
