@@ -44,7 +44,10 @@ public class LoginController
 		if (result.hasErrors()) {
 			return "Login";
 		}
-		configurationManager.loginUser(userSession.getId(), user);
+		if(!configurationManager.loginUser(userSession.getId(), user)) {
+			result.reject("401", "Unauthorised user");
+			return "Login";
+		}
 		return "Login";
 	}
 

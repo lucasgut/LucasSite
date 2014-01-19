@@ -10,6 +10,7 @@ import org.lgg.lucassite.model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component(value="configurationManager")
@@ -19,8 +20,17 @@ public class ConfigurationManagerDB implements ConfigurationManager
 	
     @Autowired
     private ConfigurationDAO configurationDAO;
+    
+    private User administrator;
 
     private Map<String, User> loggedInUsers = new HashMap<String, User>();	//session id, user 
+    
+    @Autowired
+    public void setAdministator(
+    		@Value("#{lucasSiteProps.adminUsername}") String username, 
+    		@Value("#{lucasSiteProps.adminPassword}") String password) {
+    	this.administrator = new User(username, password);
+    }
     
     /**
      * {@inheritDoc}
@@ -37,9 +47,17 @@ public class ConfigurationManagerDB implements ConfigurationManager
     }
     
 	@Override
-	public void loginUser(String userSessionId, User user) {
+	public boolean loginUser(String userSessionId, User user) {
 		logger.info("Logging-in user [" + user.getUserName() + "] on session [" + userSessionId + "].");
+		if(!isAuthorisedUser(user)) {
+			return false;
+		}
 		loggedInUsers.put(userSessionId, user);
+		return true;
+	}
+	
+	private boolean isAuthorisedUser(User user) {
+		return user.equals(administrator);
 	}
 
 	@Override

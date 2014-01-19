@@ -30,7 +30,7 @@ public interface ConfigurationManager
      * @param userSessionId session Id
      * @param user user to log-in
      */
-    public void loginUser(String userSessionId, User user);
+    public boolean loginUser(String userSessionId, User user);
 
     /**
      * Log-out a user

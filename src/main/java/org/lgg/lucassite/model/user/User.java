@@ -18,6 +18,13 @@ public class User
 		password = "";
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof User)) return false;
+		User user = (User) other;		
+		return user == this || user.userName.equals(userName) && user.password.equals(password);
+	}
+	
     public User(String userName, String password)  {
     	this.userName = userName;
     	this.password = password;
