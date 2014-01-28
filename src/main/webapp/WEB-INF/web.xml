@@ -36,5 +36,6 @@
 		<servlet-name>lucassite</servlet-name>
 		<url-pattern>*.html</url-pattern>
 		<url-pattern>*.xml</url-pattern>
+		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
 </web-app>

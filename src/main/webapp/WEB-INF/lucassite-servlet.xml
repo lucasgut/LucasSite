@@ -19,12 +19,30 @@
 	
 	<util:properties id="lucasSiteProps" location="classpath:lucassite.properties"/>
 	
-	<mvc:annotation-driven/>
-	
+	<mvc:annotation-driven />
+    	
 	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 	
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="1" />
+		<property name="mediaTypes">
+			<map>
+                <entry key='html' value='text/html'/>
+                <entry key='atom' value='application/atom+xml'/>
+                <entry key="json" value="application/json" />
+			</map>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+			</list>
+		</property>
+		<property name="ignoreAcceptHeader" value="false" />
+	</bean>
+
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="order"  value="2"/>
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
 		<property name="prefix" value="/jsp/" />
 		<property name="suffix" value=".jsp" />

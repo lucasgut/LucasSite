@@ -6,13 +6,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lgg.lucassite.model.download.Downloads;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.http.HttpStatus;
 
 public interface DownloadController
 {
@@ -61,8 +62,16 @@ public interface DownloadController
      * 
      * @return download titles.
      */
-    @RequestMapping(value = "/DownloadTitles.xml")
-    List<String> downloadTitles();
+    @RequestMapping(value = "/DownloadTitles", method=RequestMethod.GET)
+    @ResponseBody List<String> downloadTitles();
+
+    /**
+     * Returns a sorted list of download titles as an atom feed
+     * 
+     * @return download titles.
+     */
+    @RequestMapping(value = "/DownloadTitlesFeed", method=RequestMethod.GET)
+    ModelAndView downloadTitlesFeed();
     
     /**
      * Delete a download

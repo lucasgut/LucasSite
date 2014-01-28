@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -18,7 +17,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * This class represents a download.
  */
 @Entity
-@XmlRootElement
 public class Download
 {
     public static final String FIELD_ID = "id";
